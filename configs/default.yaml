@@ -1,0 +1,103 @@
+# ml-sgs-turbulence default configuration
+# Override any value by passing --config path/to/custom.yaml
+
+# ── Data ──────────────────────────────────────────────────────────────────
+data:
+  # Directory containing MONC NetCDF output files
+  data_dir: /path/to/netcdf_files
+
+  # Number of parallel workers for data loading (null = cpu_count)
+  n_workers: null
+
+  # Vertical level range [inclusive] used for feature extraction
+  k_min: 2
+  k_max: 40
+
+  # Sampling strategy: regular | random | stratified
+  sampling_strategy: stratified
+
+  # Fraction of points to retain per file (1.0 = all)
+  sampling_fraction: 1.0
+
+  # Simulation type detection: auto | arm | rce
+  sim_type: auto
+
+# ── Scalers ───────────────────────────────────────────────────────────────
+scalers:
+  # Directory containing pre-fitted .pkl scaler files
+  scaler_dir: scalers/
+
+  # Fall back to fitting new RobustScalers if .pkl files are missing
+  allow_fallback: true
+
+# ── Training ──────────────────────────────────────────────────────────────
+training:
+  batch_size: 2048
+  max_epochs: 200
+  learning_rate: 1.0e-3
+  weight_decay: 1.0e-5
+  dropout: 0.3
+  patience: 20           # early stopping patience (epochs)
+  grad_clip: 1.0         # gradient clipping max-norm
+  val_fraction: 0.1
+  seed: 42
+
+  # Loss weights for multi-task objective
+  loss_weights:
+    visc: 1.0
+    diff: 1.0
+    richardson: 0.5
+    regime: 0.3
+
+# ── Model architecture ────────────────────────────────────────────────────
+model:
+  # n_features must match the feature engineering pipeline
+  n_features: 54
+
+  mlp:
+    hidden_dims: [256, 512, 256]
+
+  resmlp:
+    embed_size: 256
+    num_blocks: 4
+    dropout: 0.3
+
+  tab_transformer:
+    embed_dim: 32
+    num_layers: 4
+    num_heads: 8
+    ff_dim: 128
+    dropout: 0.2
+
+# ── Inference ─────────────────────────────────────────────────────────────
+inference:
+  device: cuda          # cuda | cpu
+  batch_size: 8192
+  # Positivity constraints on SGS coefficients
+  enforce_positivity: true
+  positivity_epsilon: 1.0e-8
+
+# ── Evaluation ────────────────────────────────────────────────────────────
+evaluation:
+  # Variables to evaluate
+  targets:
+    - visc_coeff
+    - diff_coeff
+
+  # Statistical significance threshold
+  alpha: 0.05
+
+  # Bootstrap resamples for confidence intervals
+  n_bootstrap: 1000
+
+  # Minimum value for non-zero metric computation
+  nonzero_threshold: 1.0e-10
+
+# ── Output ────────────────────────────────────────────────────────────────
+output:
+  results_dir: results/
+  save_predictions: true
+  prediction_compression: gzip
+  prediction_compression_level: 6
+  plot_dpi: 150
+  plot_format: png      # png | pdf | svg
