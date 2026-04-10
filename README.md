@@ -20,7 +20,7 @@ A research framework accompanying the paper:
 
 The framework trains and evaluates machine learning models that predict
 **SGS eddy viscosity and diffusivity coefficients** from resolved-scale
-flow variables in the [Met Office NERC Cloud model (MONC)](https://code.metoffice.gov.uk/trac/monc),
+flow variables in the [Met Office NERC Cloud model (MONC)](https://github.com/EPIC-model/monc),
 comparing three **physics integration strategies**:
 
 | Strategy | Description |
