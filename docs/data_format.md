@@ -3,7 +3,7 @@
 ## Input: MONC NetCDF Files
 
 The pipeline expects output files from the
-[Met Office NERC Cloud model (MONC)](https://github.com/EPIC-model/monc).
+[Met Office NERC Cloud model (MONC)](https://github.com/MetOffice/monc).
 
 ### Required Variables
 
